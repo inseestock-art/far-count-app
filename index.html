@@ -865,6 +865,7 @@ input[type=checkbox]:disabled{cursor:default;opacity:.5}
 // ===== DATA =====
 const PINS = {staff:'1234', admin:'0000'};
 let currentRole = '';
+const currentDeviceId = 'dev_' + Math.random().toString(36).slice(2,9);
 let currentSection = 'is';
 let editingId = null;
 let deleteId = null;
@@ -2239,7 +2240,7 @@ async function saveToFirebase(assetId){
     customFinding: a.customFinding||'',
     remark: rmk,
     updated_at: Date.now(),
-    updated_by: currentRole
+    updated_by: currentDeviceId
   };
   try {
     const timeout = new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),5000));
@@ -2266,7 +2267,7 @@ function startFirebasePoll(){
       let changed=false;
       Object.entries(data).forEach(([id,d])=>{
         if(!d.updated_at||d.updated_at<=lastPollTime)return;
-        if(d.updated_by===currentRole)return; // skip own updates
+        if(d.updated_by===currentDeviceId)return; // skip own updates
         const a=assets.find(x=>x.id===id); if(!a)return;
         a.checks.bj=d.bj||false;
         a.checks.kp=d.kp||false;
